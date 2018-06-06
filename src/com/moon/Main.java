@@ -2,8 +2,13 @@ package com.moon;
 
 import com.moon.util.PropertiesUtil;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * 贪吃蛇游戏主界面
@@ -71,6 +76,16 @@ public class Main extends Frame {
     Dialog dialog = new Dialog(this, "游戏结束", true);
 
     /**
+     * 贪吃蛇背景音乐
+     */
+    AudioClip backgroundAudioClip = null;
+
+    /**
+     * 贪吃蛇死亡音乐
+     */
+    AudioClip deadAudioClip = null;
+
+    /**
      * 程序主入口，启动贪吃蛇程序
      * @param args
      */
@@ -84,6 +99,10 @@ public class Main extends Frame {
     public void launchFrame() {
         // 初始化游戏界面外观
         initFrameFacade();
+        // 添加背景音乐不播放
+        addBackgroudMusic();
+        // 只添加死亡音乐不播放
+        addDeadMusic();
         // 事件处理程序
         initEventListener();
         this.setVisible(true);
@@ -94,7 +113,7 @@ public class Main extends Frame {
      */
     private void initFrameFacade() {
         // 设置主窗口的属性
-        this.setSize(PANEL_WIDTH + 7, PANEL_HEIGHT + 36);
+        this.setSize(PANEL_WIDTH + 7, PANEL_HEIGHT + 61);
         this.setLocation(500, 300);
         this.setBackground(Color.lightGray);
         this.setTitle("贪吃蛇");
@@ -169,12 +188,40 @@ public class Main extends Frame {
     }
 
     /**
+     * 添加并播放背景音乐
+     */
+    private void addBackgroudMusic() {
+        URL url = null;
+        try {
+            url = new URL(this.getClass().getResource("/") + "audio/snake_background.wav");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        backgroundAudioClip = Applet.newAudioClip(url);
+    }
+
+    /**
+     * 添加死亡时的音效
+     */
+    private void addDeadMusic() {
+        URL url = null;
+        try {
+            url = new URL(this.getClass().getResource("/") + "audio/snake_dead.wav");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        deadAudioClip = Applet.newAudioClip(url);
+    }
+
+    /**
      * 开始游戏
      */
     private void startGame() {
         // 新启动一个线程
         panelThread = new Thread(myPanel);
         if(panelThread != null) {
+            // 循环播放背景音乐
+            backgroundAudioClip.loop();
             panelThread.start();
             // 修改当前的状态
             status = RUNNING;
@@ -222,9 +269,13 @@ public class Main extends Frame {
                 if(status == RUNNING) {
                     // 修改状态为暂停
                     status = SUSPEND;
+                    // 暂停音乐
+                    backgroundAudioClip.stop();
                 } else if(status == SUSPEND) {
                     // 唤起线程
                     myPanel.resume();
+                    // 重新播放
+                    backgroundAudioClip.loop();
                 }
                 break;
             default:
@@ -373,6 +424,10 @@ public class Main extends Frame {
                         }
                         if(!snake.isAlive()) {
                             System.out.println("贪吃蛇死亡，游戏结束！");
+                            // 停止背景音效
+                            backgroundAudioClip.stop();
+                            // 播放死亡音效
+                            deadAudioClip.play();
                             // 记录最高成绩
                             // 获取当前的最高分
                             int curScore = Integer.valueOf(PropertiesUtil.getDefaultPropertiesValue("history.max.score"));
