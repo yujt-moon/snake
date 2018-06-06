@@ -1,6 +1,7 @@
 package com.moon.util;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -23,11 +24,9 @@ public class PropertiesUtil {
         String propVal = null;
         try {
             // 读取配置文件
-            String locUrl = PropertiesUtil.class.getResource("/").toString();
-            if(locUrl.indexOf("file:/") != -1) {
-                locUrl = locUrl.substring(6);
-            }
-            in = new FileInputStream(new File( locUrl + propFileName));
+            URL locUrl = PropertiesUtil.class.getResource("/" + propFileName);
+            System.out.println("locUrl: " + locUrl.getPath());
+            in = PropertiesUtil.class.getResourceAsStream("/" + propFileName);
             // 使用properties对象加载输入流
             properties.load(in);
             // 获取key对应的value值
@@ -58,11 +57,8 @@ public class PropertiesUtil {
         FileWriter fw = null;
         try {
             // 读取配置文件
-            String locUrl = PropertiesUtil.class.getResource("/").toString();
-            if(locUrl.indexOf("file:/") != -1) {
-                locUrl = locUrl.substring(6);
-            }
-            in = new FileInputStream(new File(locUrl + propFileName));
+            URL locUrl = PropertiesUtil.class.getResource("/" + propFileName);
+            in = PropertiesUtil.class.getResourceAsStream("/" + propFileName);
             // 使用properties对象加载输入流
             properties.load(in);
             Enumeration<?> enumeration = properties.propertyNames();
@@ -75,7 +71,7 @@ public class PropertiesUtil {
                     properties.setProperty(key, properties.getProperty(key));
                 }
             }
-            File file = new File(locUrl + propFileName);
+            File file = new File(locUrl.getFile());
             fw = new FileWriter(file, false);
             // 写出属性文件
             properties.store(fw, null);
@@ -106,7 +102,7 @@ public class PropertiesUtil {
      * @return
      */
     public static String getDefaultPropertiesValue(String propKey) {
-        return getPropertiesValue("com/snake.properties", propKey);
+        return getPropertiesValue("snake.properties", propKey);
     }
 
     /**
@@ -115,11 +111,11 @@ public class PropertiesUtil {
      * @param propVal 属性值
      */
     public static void setDefaultPropertiesValue( String propKey, String propVal) {
-        setPropertiesValue("com/snake.properties", propKey, propVal);
+        setPropertiesValue("snake.properties", propKey, propVal);
     }
 
     public static void main(String[] args) {
         //PropertiesUtil.setPropertiesValue("snake.properties", "history.max.score", "30");
-        System.out.println(PropertiesUtil.getPropertiesValue("com/snake.properties", "history.max.score"));
+        System.out.println(PropertiesUtil.getPropertiesValue("snake.properties", "history.max.score"));
     }
 }
