@@ -192,11 +192,7 @@ public class Main extends Frame {
      */
     private void addBackgroudMusic() {
         URL url = null;
-        try {
-            url = new URL(this.getClass().getResource("/") + "audio/snake_background.wav");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        url = this.getClass().getResource("/audio/snake_background.wav");
         backgroundAudioClip = Applet.newAudioClip(url);
     }
 
@@ -205,11 +201,8 @@ public class Main extends Frame {
      */
     private void addDeadMusic() {
         URL url = null;
-        try {
-            url = new URL(this.getClass().getResource("/") + "audio/snake_dead.wav");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        url = this.getClass().getResource("/audio/snake_dead.wav");
+        System.out.println("snake_dead.wav: " + url);
         deadAudioClip = Applet.newAudioClip(url);
     }
 
@@ -303,6 +296,11 @@ public class Main extends Frame {
          */
         Graphics gOffScreen = null;
 
+        /**
+         * 获取最高得分
+         */
+        String historyMaxScore = PropertiesUtil.getDefaultPropertiesValue("history.max.score");
+
         public void init(Graphics g) {
             // 将背景修改成图片
             Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -353,7 +351,6 @@ public class Main extends Frame {
             gOffScreen.setColor(Color.RED);
             gOffScreen.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 30));
             gOffScreen.drawString("总得分为：" + snake.getScore(), 20, 40);
-            String historyMaxScore = PropertiesUtil.getDefaultPropertiesValue("history.max.score");
             gOffScreen.drawString("最高得分为：" + historyMaxScore, 400, 40);
 
             // 还原画笔的默认属性
