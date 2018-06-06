@@ -23,7 +23,11 @@ public class PropertiesUtil {
         String propVal = null;
         try {
             // 读取配置文件
-            in = new FileInputStream(new File(System.getProperty("user.dir") + "/src/com/" + propFileName));
+            String locUrl = PropertiesUtil.class.getResource("/").toString();
+            if(locUrl.indexOf("file:/") != -1) {
+                locUrl = locUrl.substring(6);
+            }
+            in = new FileInputStream(new File( locUrl + propFileName));
             // 使用properties对象加载输入流
             properties.load(in);
             // 获取key对应的value值
@@ -54,7 +58,11 @@ public class PropertiesUtil {
         FileWriter fw = null;
         try {
             // 读取配置文件
-            in = new FileInputStream(new File(System.getProperty("user.dir") + "/src/com/" + propFileName));
+            String locUrl = PropertiesUtil.class.getResource("/").toString();
+            if(locUrl.indexOf("file:/") != -1) {
+                locUrl = locUrl.substring(6);
+            }
+            in = new FileInputStream(new File(locUrl + propFileName));
             // 使用properties对象加载输入流
             properties.load(in);
             Enumeration<?> enumeration = properties.propertyNames();
@@ -67,7 +75,7 @@ public class PropertiesUtil {
                     properties.setProperty(key, properties.getProperty(key));
                 }
             }
-            File file = new File(System.getProperty("user.dir") + "/src/com/" + propFileName);
+            File file = new File(locUrl + propFileName);
             fw = new FileWriter(file, false);
             // 写出属性文件
             properties.store(fw, null);
@@ -98,7 +106,7 @@ public class PropertiesUtil {
      * @return
      */
     public static String getDefaultPropertiesValue(String propKey) {
-        return getPropertiesValue("snake.properties", propKey);
+        return getPropertiesValue("com/snake.properties", propKey);
     }
 
     /**
@@ -107,11 +115,11 @@ public class PropertiesUtil {
      * @param propVal 属性值
      */
     public static void setDefaultPropertiesValue( String propKey, String propVal) {
-        setPropertiesValue("snake.properties", propKey, propVal);
+        setPropertiesValue("com/snake.properties", propKey, propVal);
     }
 
     public static void main(String[] args) {
-        PropertiesUtil.setPropertiesValue("snake.properties", "history.max.score", "30");
-        //System.out.println(PropertiesUtil.getPropertiesValue("snake.properties", "history.max.score"));
+        //PropertiesUtil.setPropertiesValue("snake.properties", "history.max.score", "30");
+        System.out.println(PropertiesUtil.getPropertiesValue("com/snake.properties", "history.max.score"));
     }
 }
